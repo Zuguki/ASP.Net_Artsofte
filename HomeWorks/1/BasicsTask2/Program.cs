@@ -15,9 +15,9 @@ public static class TaskPractice
     public static string FirstExceptionMessage = nameof(FirstExceptionMessage);
     public static string SecondExceptionMessage = nameof(SecondExceptionMessage);
 
-    public static int MainDelayTime = 1000;
-    public static int FirstDelayTime = 1000;
-    public static int SecondDelayTime = 1000;
+    private const int MainDelayTime = 1000;
+    private const int FirstDelayTime = 1000;
+    private const int SecondDelayTime = 1000;
 
     public static async Task<List<string>> GetExceptionMessageListAsync()
     {
@@ -41,22 +41,17 @@ public static class TaskPractice
         return result;
     }
 
-    public static Task DooMainTaskAsync()
-    {
-        return Task.Delay(MainDelayTime);
-    }
+    private static Task DooMainTaskAsync() => Task.Delay(MainDelayTime);
 
-    public static async Task ThrowFirstExceptionAsync(Task task)
+    private static async Task ThrowFirstExceptionAsync(Task task)
     {
         await Task.Delay(FirstDelayTime);
-
         throw new Exception(FirstExceptionMessage);
     }
 
-    public static async Task ThrowSecondExceptionAsync(Task task)
+    private static async Task ThrowSecondExceptionAsync(Task task)
     {
         await Task.Delay(SecondDelayTime);
-
         throw new Exception(SecondExceptionMessage);
     }
 }
