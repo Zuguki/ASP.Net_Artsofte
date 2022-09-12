@@ -16,9 +16,9 @@ public static class TaskPractice
     public static string FirstExceptionMessage = nameof(FirstExceptionMessage);
     public static string SecondExceptionMessage = nameof(SecondExceptionMessage);
 
-    private const int MainDelayTime = 1000;
-    private const int FirstDelayTime = 1000;
-    private const int SecondDelayTime = 1000;
+    public static int MainDelayTime = 1000;
+    public static int FirstDelayTime = 1000;
+    public static int SecondDelayTime = 1000;
 
     public static async Task<List<string>> GetExceptionMessageListAsync()
     {
@@ -26,9 +26,7 @@ public static class TaskPractice
         var task = DooMainTaskAsync();
         var task2 = task.ContinueWith(ThrowFirstExceptionAsync);
         var task3 = task.ContinueWith(ThrowSecondExceptionAsync);
-        // var allTasks = Task.WhenAll(task, await task2, await task3);
         Task? allTasks = null;
-        // var allTasks = Task.WhenAll(task2, task3);
 
         try
         {
@@ -39,11 +37,6 @@ public static class TaskPractice
         {
             if (allTasks?.Exception is not null)
                 result.AddRange(allTasks.Exception.InnerExceptions.Select(exception => exception.Message));
-        }
-
-        foreach (var exc in result)
-        {
-            Console.WriteLine(exc);
         }
             
         return result;
