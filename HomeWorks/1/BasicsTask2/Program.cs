@@ -26,30 +26,38 @@ public static class TaskPractice
         var task = DooMainTaskAsync();
         var task2 = task.ContinueWith(ThrowFirstExceptionAsync);
         var task3 = task.ContinueWith(ThrowSecondExceptionAsync);
-        var allTasks = Task.WhenAll(task, await task2, await task3);
+        // var allTasks = Task.WhenAll(task, await task2, await task3);
+        Task? allTasks = null;
+        // var allTasks = Task.WhenAll(task2, task3);
 
         try
         {
+            allTasks = Task.WhenAll(task, await task2, await task3);
             await allTasks;
         }
         catch (Exception _)
         {
-            if (allTasks.Exception is not null)
+            if (allTasks?.Exception is not null)
                 result.AddRange(allTasks.Exception.InnerExceptions.Select(exception => exception.Message));
+        }
+
+        foreach (var exc in result)
+        {
+            Console.WriteLine(exc);
         }
             
         return result;
     }
 
-    private static Task DooMainTaskAsync() => Task.Delay(MainDelayTime);
+    public static Task DooMainTaskAsync() => Task.Delay(MainDelayTime);
     
-    private static async Task ThrowFirstExceptionAsync(Task task)
+    public static async Task ThrowFirstExceptionAsync(Task task)
     {
         await Task.Delay(FirstDelayTime);
         throw new Exception(FirstExceptionMessage);
     }
 
-    private static async Task ThrowSecondExceptionAsync(Task task)
+    public static async Task ThrowSecondExceptionAsync(Task task)
     {
         await Task.Delay(SecondDelayTime);
         throw new Exception(SecondExceptionMessage);
