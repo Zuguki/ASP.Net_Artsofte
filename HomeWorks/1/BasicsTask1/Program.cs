@@ -14,19 +14,9 @@ public class Person
 {
     public string Name { get; set; }
 
-    public override bool Equals(object? obj)
-    {
-        var rnd = new Random();
-        var rndValue = rnd.Next();
+    public override bool Equals(object? obj) => obj is Person other && other.Name == Name;
 
-        return rndValue % 2 == 0;
-    }
-
-    public override int GetHashCode()
-    {
-        var rnd = new Random();
-        return rnd.Next();
-    }
+    public override int GetHashCode() => HashCode.Combine(Name);
 }
 
 // нельзя трогать этот класс
