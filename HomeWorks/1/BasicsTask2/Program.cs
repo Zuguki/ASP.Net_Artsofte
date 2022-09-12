@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,28 +22,27 @@ public static class TaskPractice
 
     public static async Task<List<string>> GetExceptionMessageListAsync()
     {
-        // код писать надо в этом методе
-
         var result = new List<string>();
         var task = DooMainTaskAsync();
         var task2 = task.ContinueWith(ThrowFirstExceptionAsync);
         var task3 = task.ContinueWith(ThrowSecondExceptionAsync);
+        var allTasks = Task.WhenAll(task, await task2, await task3);
 
         try
         {
-            await task;
-            await task2;
-            await task3;
+            await allTasks;
         }
-        catch
+        catch (Exception _)
         {
+            if (allTasks.Exception is not null)
+                result.AddRange(allTasks.Exception.InnerExceptions.Select(exception => exception.Message));
         }
-
+            
         return result;
     }
 
     private static Task DooMainTaskAsync() => Task.Delay(MainDelayTime);
-
+    
     private static async Task ThrowFirstExceptionAsync(Task task)
     {
         await Task.Delay(FirstDelayTime);
