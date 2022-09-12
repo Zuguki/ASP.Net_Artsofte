@@ -13,6 +13,7 @@ app.Run();
 public static class ThreadPractice
 {
     // писать можно только в этом классе. Код можно только добавлять.
+    private static object _lock = new object();
 
     public static List<double> Collection = new List<double>();
 
@@ -29,9 +30,12 @@ public static class ThreadPractice
 
     public static void HandleCollection(Action<List<double>> fillSequence)
     {
-        fillSequence(Collection);
-        Print(Collection);
-        Collection.Clear();
+        lock (_lock)
+        {
+            fillSequence(Collection);
+            Print(Collection);
+            Collection.Clear();
+        }
     }
 
     public static void FillFirstSequence(List<double> collection)
