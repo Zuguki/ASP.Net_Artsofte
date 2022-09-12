@@ -12,10 +12,9 @@ app.Run();
 
 public static class ThreadPractice
 {
-    // писать можно только в этом классе. Код можно только добавлять.
-    private static object _lock = new object();
+    private static Mutex _mutex = new Mutex();
 
-    public static List<double> Collection = new List<double>();
+    public static List<double> Collection = new();
 
     public static void Execute()
     {
@@ -30,12 +29,11 @@ public static class ThreadPractice
 
     public static void HandleCollection(Action<List<double>> fillSequence)
     {
-        lock (_lock)
-        {
-            fillSequence(Collection);
-            Print(Collection);
-            Collection.Clear();
-        }
+        _mutex.WaitOne();
+        fillSequence(Collection);
+        Print(Collection);
+        Collection.Clear();
+        _mutex.ReleaseMutex();
     }
 
     public static void FillFirstSequence(List<double> collection)
