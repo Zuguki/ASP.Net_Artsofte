@@ -33,7 +33,7 @@ public static class TaskPractice
             allTasks = Task.WhenAll(task, await task2, await task3);
             await allTasks;
         }
-        catch (Exception _)
+        catch 
         {
             if (allTasks?.Exception is not null)
                 result.AddRange(allTasks.Exception.InnerExceptions.Select(exception => exception.Message));
