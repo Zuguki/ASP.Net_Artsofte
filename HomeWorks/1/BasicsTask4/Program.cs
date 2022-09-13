@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,10 +46,22 @@ public class Car
 
 public static class ReflectionPractice
 {
-    // писать код в этом классе
-
     public static object GetWheel()
     {
-        return null;
+        var wheelType = Assembly.GetExecutingAssembly().GetTypes()
+            .FirstOrDefault(type => type.IsClass && !type.IsAbstract && typeof(IWheel).IsAssignableFrom(type));
+
+        if (wheelType is null)
+            return null;
+        
+        var instance = Activator.CreateInstance(wheelType, true);
+        var methods = wheelType.BaseType?.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
+        foreach (var method in methods)
+            method.Invoke(instance, null);
+        var fields = wheelType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField);
+        foreach (var field in fields)
+            field.SetValue(instance, field.FieldType == typeof(int) ? 999 : "999");
+
+        return instance;
     }
 }
