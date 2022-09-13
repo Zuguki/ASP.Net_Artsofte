@@ -52,12 +52,14 @@ public static class ReflectionPractice
             .FirstOrDefault(type => type.IsClass && !type.IsAbstract && typeof(IWheel).IsAssignableFrom(type));
 
         if (wheelType is null)
-            return null;
+            return new object();
         
         var instance = Activator.CreateInstance(wheelType, true);
-        var methods = wheelType.BaseType?.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
-        foreach (var method in methods)
-            method.Invoke(instance, null);
+        var setMethod = wheelType.GetMethod("set_AxisLength", BindingFlags.NonPublic | BindingFlags.Instance);
+        var baseMethod = wheelType.BaseType?.GetMethod("SetDefaultLoadCapacity", BindingFlags.NonPublic | BindingFlags.Instance);
+        setMethod!.Invoke(instance, new object[] {999});
+        baseMethod!.Invoke(instance, null);
+        
         var fields = wheelType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField);
         foreach (var field in fields)
             field.SetValue(instance, field.FieldType == typeof(int) ? 999 : "999");
