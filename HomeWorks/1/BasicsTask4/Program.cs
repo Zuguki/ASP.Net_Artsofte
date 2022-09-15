@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
@@ -48,8 +47,8 @@ public static class ReflectionPractice
 {
     public static object GetWheel()
     {
-        var wheelType = Assembly.GetExecutingAssembly().GetTypes()
-            .FirstOrDefault(type => type.IsClass && !type.IsAbstract && typeof(IWheel).IsAssignableFrom(type));
+        var wheelType = typeof(IWheel).Assembly.GetTypes().FirstOrDefault(type =>
+            type.IsClass && !type.IsAbstract && typeof(IWheel).IsAssignableFrom(type));
 
         if (wheelType is null)
             return new object();
@@ -63,7 +62,7 @@ public static class ReflectionPractice
         var fields = wheelType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetField);
         foreach (var field in fields)
             field.SetValue(instance, field.FieldType == typeof(int) ? 999 : "999");
-
+        
         return instance;
     }
 }
