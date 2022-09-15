@@ -47,7 +47,13 @@ public static class ReflectionPractice
 {
     public static object GetWheel()
     {
-        var wheelType = typeof(IWheel).Assembly.GetTypes().FirstOrDefault(type =>
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var currentAssembly = assemblies
+            .FirstOrDefault(assembly => ((AssemblyCompanyAttribute) assembly
+                .GetCustomAttributes(typeof(AssemblyCompanyAttribute), true)
+            .FirstOrDefault()!).Company == "GoodGod");
+
+        var wheelType = currentAssembly?.GetTypes().FirstOrDefault(type =>
             type.IsClass && !type.IsAbstract && typeof(IWheel).IsAssignableFrom(type));
 
         if (wheelType is null)
